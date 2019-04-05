@@ -11,6 +11,7 @@
   ]">
     <div :class="'kBuilderBlock__header kBuilderBlock__header--col-' + columnsCount">
       <k-icon
+        v-if="allowNewBlock"
         type="sort"
         :class="'kBuilder__dragDropHandle kBuilder__dragDropHandle--col-' + columnsCount"
       />
@@ -58,6 +59,7 @@
               align="right"
             >
               <k-dropdown-item
+                v-if="allowNewBlock"
                 icon="copy"
                 @click="$emit('clone', index)"
               >{{ $t('builder.clone') }}</k-dropdown-item>
@@ -112,7 +114,8 @@ export default {
     encodedPageId: String,
     styles: String,
     script: String,
-    parentPath: String
+    parentPath: String,
+    allowNewBlock: Boolean,
   },
   components: {
     BuilderPreview

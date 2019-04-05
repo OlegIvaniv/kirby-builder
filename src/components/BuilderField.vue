@@ -23,7 +23,7 @@
       >
         <div
           class="kBuilder__inlineAddButton"
-          v-if="!max || blockCount < max"
+          v-if="allowNewBlock"
           :class="{'kBuilder__inlineAddButton--horizontal': (columnsCount == 1), 'kBuilder__inlineAddButton--vertical': (columnsCount > 1)}"
           @click="onClickAddBlock(index)"
         ></div>
@@ -38,19 +38,20 @@
           :styles="cssContents[blockValue._key]"
           :script="jsContents[blockValue._key]"
           :parentPath="path"
+          :allow-new-block="allowNewBlock"
           @input="onBlockInput"
           @clone="cloneBlock"
           @delete="deleteBlock"
         />
         <div
-          v-if="(columnsCount % index == 0 && columnsCount > 1 && (!max || blockCount < max))"
+          v-if="(columnsCount % index == 0 && columnsCount > 1 && (allowNewBlock))"
           class="kBuilder__inlineAddButton kBuilder__inlineAddButton--vertical kBuilder__inlineAddButton--after"
           @click="onClickAddBlock(index + 1)"
         ></div>
       </k-column>
       <k-column
         :width="columnWidth"
-        v-if="!max || blockCount < max"
+        v-if="allowNewBlock"
       >
         <k-button
           icon="add"
@@ -109,7 +110,8 @@ export default {
     encodedPageId: String,
     cssUrls: String,
     jsUrls: String,
-    parentPath: String
+    parentPath: String,
+    dragGroup: String
   },
   components: {
     BuilderBlock
@@ -146,6 +148,9 @@ export default {
     };
   },
   computed: {
+    allowNewBlock() {
+      return !this.max || this.blockCount < this.max;
+    },
     val() {
       return this.blocks.map(block => block.content);
     },
@@ -176,7 +181,7 @@ export default {
     },
     draggableOptions() {
       return {
-        group: this._uid,
+        group: this.dragGroup || this.name,
         clone: true,
         handle: ".kBuilder__dragDropHandle",
         forceFallback: true,
